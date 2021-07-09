@@ -1,11 +1,13 @@
 from aiogram import  types
 
 from config.conf_bot import dp
+from crud.user import get_bool_trade, add_interval_time, add_para_trade, get_db
+
 
 @dp.message_handler()
 async def echo_all(message:types.Message):
-    if message.text == 'Мои сделки 💸':
-        mess = 'dct p,c'
+    if message.text[:10] == 'Мои сделки':
+        mess = await get_bool_trade(str(message.chat.id))
         await message.answer(mess)
     elif message.text == 'Добавить сделку 💱':
         markup = types.InlineKeyboardMarkup()
@@ -25,55 +27,29 @@ async def get_buton_interval(call):
     btn_icpusdt = types.InlineKeyboardButton(text='icpusdt', callback_data="icpusdt")
     btn_chrusdt = types.InlineKeyboardButton(text='chrusdt', callback_data="chrusdt")
     markup.add(btn_dashusdt,btn_btcusdt,btn_ethusdt,btn_icpusdt,btn_chrusdt)
-    # url = f'http://localhost:8000/ema_ribbon_data/time?user_id={call.from_user.id}&interval={call.data}'
-    # data = session.get(url)
+    await add_interval_time(str(call["from"]["id"]),str(call.data))
     await call.message.answer("Выберите пару для торгов.", reply_markup = markup)
 
-
+@get_db
 async def get_buton_adds(call):
     markup = types.InlineKeyboardMarkup()
     yes = types.InlineKeyboardButton(text='Подвердить', callback_data="yes")
     no = types.InlineKeyboardButton(text='Отменить', callback_data="no")
     markup.add(yes,no)
-    
-    # url = f'http://localhost:8000/user/?user_id={call.from_user.id}'
-    # data = session.get(url)
-    # response_data = data.json()
-    # url_symvol = f'http://localhost:8000/ema_ribbon_data/para?user_id={call.from_user.id}&symbol={call.data}'
-    # data_symvol = session.get(url_symvol)
-    
-    # interval = response_data['user_deal'][0]['interval']
-    await call.message.answer(f'Условие торгов для бота : таймфрейм ,пара : ', reply_markup = markup)
+    data_trade = await add_para_trade(str(call["from"]["id"]),str(call.data))
+    interval = data_trade['interval']
+    para = data_trade['deal_symbol']
+    await call.message.answer(f'Условие торгов для бота : таймфрейм {interval} ,пара : {para}', reply_markup = markup)
 
 @dp.callback_query_handler()
 async def callback_inline(call:types.CallbackQuery):
-    if call.data == '5m':
+    if call.data in ['5m','15m','30m','1h','4h','1h',]:
         await get_buton_interval(call)
-    if call.data == '15m':
-        await get_buton_interval(call)
-    if call.data == '30m':
-        await get_buton_interval(call)
-    if call.data == '1h':
-        await get_buton_interval(call)
-    if call.data == '4h':
-        await get_buton_interval(call)
-    if call.data == "1" :
+
+    if call.data in ["1","2","chrusdt","dashusdt","btcusdt","ethusdt","icpusdt"]:
         markup = await get_buton_adds(call)
-    if call.data == "2" :
-        markup = await get_buton_adds(call) 
-    if call.data == "chrusdt" :
-        markup = await get_buton_adds(call)
-    if call.data == "dashusdt" :
-        markup = await get_buton_adds(call)
-    if call.data == "btcusdt" :
-        markup = await get_buton_adds(call)
-    if call.data == "ethusdt" :
-        markup = await get_buton_adds(call)
-    if call.data == "icpusdt" :
-        markup = await get_buton_adds(call)
+
     if call.data == "yes" :
-        # url = f'http://localhost:8000/ema_ribbon_data/?user_id={call.from_user.id}'
-        # data = session.get(url)
         await call.message.answer("Запущено")
     if call.data == "no" :
         await call.message.answer("Отменено")

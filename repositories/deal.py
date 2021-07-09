@@ -19,3 +19,4 @@ class Deal(ormar.Model):
     deal_symbol: str = ormar.String(max_length=50,null=True)
     interval: str = ormar.String(max_length=100,null=True)
     id_deal_proces: str = ormar.String(max_length=100,null=True)
+    
