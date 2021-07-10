@@ -6,9 +6,11 @@ from crud.user import create_user
 
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
+
     """
-    This handler will be called when user sends `/start` or `/help` command
+    Старт
     """
+    
     await create_user(message.chat.id)
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton(text='Мои сделки', callback_data=1))

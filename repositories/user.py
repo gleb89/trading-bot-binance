@@ -7,6 +7,12 @@ from .base import BaseMeta
 
 
 class User(ormar.Model):
+
+    """
+    Таблица пользователей
+    user_id берется из id user telegramm
+    """
+    
     class Meta(BaseMeta):
         tablename = "user"
 
