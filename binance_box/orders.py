@@ -1,7 +1,6 @@
 from binance.client import Client
 from decimal import Decimal
-KEY = 'VPWNpRRtm8J0TJ9miR6HweCqQRr4DTetW1q26tSeTLr8w9BJ0WN08QqsNpPomFZb'
-SECRET = '57cWhuqtvLXG8AKSOrpGzZrM9jxEe1CDynjnHipf2XSl7cggdsWw6uap6jskyPnW'
+
 
 client = Client(KEY, SECRET)
 from binance.enums import *
