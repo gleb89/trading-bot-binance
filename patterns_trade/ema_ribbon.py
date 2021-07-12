@@ -9,6 +9,7 @@ from repositories.user import User
 from config.conf_bot import  bot_not_async 
 from config.database import database
 from crud.user import get_db
+from binance_box.orders import orders_for_trade
 
 
 
@@ -66,7 +67,7 @@ class EmaRibbon(Base_binance):
         atr ,bars_4_end, bars_data = await self.get_bars_all(
                                                 tiker, interval
                                                 )
-        
+ 
         #ema ribbon в отрицательных значениях
         ema_rib_negative = (
                         bars_data['ema21'] < bars_data['ema55']
@@ -86,21 +87,29 @@ class EmaRibbon(Base_binance):
                 bars_4_end.pop()
                 stop_position = bars_data['ema55'] - atr
                 
-                bot_not_async.send_message(
-                    chat_id,
-                    'Покупка' 
-                    f'{bars_4_end[4]}'
-                    'stop'
-                    f'{stop_position}'
-                    )
-                
-                user = await User.objects.prefetch_related(
-                    'user_deal'
-                    ).get_or_none(
-                    user_id=chat_id
-                    )
-                deal = await Deal.objects.get(owner=user)
-                await deal.update(id_deal_proces=True,deal_true=False)
+                trade_order = orders_for_trade(tiker.upper(), stop_position)
+                if trade_order:
+                    bot_not_async.send_message(
+                        chat_id,
+                        'Покупка' 
+                        f'{bars_4_end[4]}'
+                        'stop'
+                        f'{stop_position}'
+                        )
+                    
+                    user = await User.objects.prefetch_related(
+                        'user_deal'
+                        ).get_or_none(
+                        user_id=chat_id
+                        )
+                    deal = await Deal.objects.get(owner=user)
+                    await deal.update(id_deal_proces=True,deal_true=False)
+                else:
+                    bot_not_async.send_message(
+                        chat_id,
+                        'При размещении ордера на покупку что-то пошло не так'
+                        )
+                        
                
             
             else:
@@ -117,6 +126,8 @@ class EmaRibbon(Base_binance):
                 ):
      
                 stop_position = bars_data['ema21'] + atr
+                # trade_order = orders_for_trade(tiker.upper(), stop_position)
+                print(tiker.upper(), stop_position)
                 bot_not_async.send_message(
                     chat_id,
                     'Шорт позиция' 

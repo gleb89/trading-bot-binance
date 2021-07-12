@@ -13,6 +13,7 @@ from crud.user import (
                     )
 from .thread import thread_function
 from .services import get_buton_adds, get_buton_interval
+from binance_box.orders import get_balance
 
 
 
@@ -41,6 +42,11 @@ async def echo_all(message:types.Message):
             await message.answer(mess,reply_markup=markup, parse_mode='html')
         else:
             await message.answer(mess)
+    elif message.text == 'Баланс Spot 💱':
+        my_balance_spot = get_balance()
+        await message.answer(
+                f'Баланс: {my_balance_spot}$'
+                )
     elif message.text == 'Добавить сделку 💱':
         if await get_bool_trade_trhread(
                     str(message.chat.id)
@@ -54,6 +60,10 @@ async def echo_all(message:types.Message):
                 )
         else:
             markup = types.InlineKeyboardMarkup()
+            btn_1m = types.InlineKeyboardButton(
+                text='1m',
+                callback_data="1m"
+                )
             btn_5m = types.InlineKeyboardButton(
                 text='5m',
                 callback_data="5m"
@@ -75,11 +85,12 @@ async def echo_all(message:types.Message):
                 callback_data="4h"
                 )
             markup.add(
-                btn_5m,btn_15m,btn_30m,btn_1h,btn_4h
+                btn_5m,btn_15m,btn_30m,btn_1h,btn_4h,btn_1m
                 )
             await message.answer(
                 "Выберите интервал баров для торговли.",
                 reply_markup = markup)
+        
 
 
 
@@ -90,6 +101,7 @@ async def callback_inline(call:types.CallbackQuery):
     Отслеживает нажатия кнопок
     """
     if call.data in [
+        '1m',
         '5m',
         '15m',
         '30m',
@@ -127,8 +139,7 @@ async def callback_inline(call:types.CallbackQuery):
             await call.message.answer("Запущено")
         except:
             await call.message.answer(
-                "Что-то пошло не так,поробуйте ещ раз!"
-                )
+                "Что-то пошло не так,поробуйте ещ раз!"         )
 
     if call.data == "no" :
         await call.message.answer("Отменено")

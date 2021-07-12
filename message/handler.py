@@ -14,11 +14,14 @@ async def send_welcome(message: types.Message):
     trade = await user.get_bool_trade(str(message.chat.id))
     button_sdelki = types.KeyboardButton(f'Мои сделки 💸')
     button_add_sdelka= types.KeyboardButton('Добавить сделку 💱')
+    button_balance_spot = types.KeyboardButton('Баланс Spot 💱')
     greet_kb1 = types.ReplyKeyboardMarkup(
             resize_keyboard=True
         ).add(
-            button_sdelki, button_add_sdelka
+            button_sdelki,
+            button_add_sdelka,
             )
+    greet_kb1.add(button_balance_spot)
     await message.reply(
         f'Привет!{message.from_user.first_name}',
          reply_markup = greet_kb1 

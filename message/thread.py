@@ -9,6 +9,8 @@ async def start_ema(tiker,interval,user_id):
     ema =  ema_ribbon.EmaRibbon()
     while deal_t:
         await ema.logicks_price_in_ema(tiker, interval, user_id)
+        if interval == '1m':
+            sleep(60)
         if interval == '5m':
             sleep(300)
         elif interval == '15m':
