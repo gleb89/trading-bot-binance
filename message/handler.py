@@ -14,7 +14,7 @@ async def send_welcome(message: types.Message):
     trade = await user.get_bool_trade(str(message.chat.id))
     button_sdelki = types.KeyboardButton(f'Мои сделки 💸')
     button_add_sdelka= types.KeyboardButton('Добавить сделку 💱')
-    button_balance_spot = types.KeyboardButton('Баланс Spot 💱')
+    button_balance_spot = types.KeyboardButton('Баланс Spot USDT 💱')
     greet_kb1 = types.ReplyKeyboardMarkup(
             resize_keyboard=True
         ).add(

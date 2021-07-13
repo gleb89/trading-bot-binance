@@ -11,9 +11,11 @@ from repositories import user, deal
 from config.database import metadata, engine, database
 
 
+
 metadata.create_all(engine)
 
 logging.basicConfig(level=logging.INFO)
+
 
 
 

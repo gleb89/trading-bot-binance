@@ -5,7 +5,7 @@ import telebot
 
 
 
-API_TOKEN = settings.api_token
+API_TOKEN = settings.api_token_telegramm
 bot_not_async  = telebot.TeleBot(API_TOKEN , parse_mode=None)
 # Configure logging
 
